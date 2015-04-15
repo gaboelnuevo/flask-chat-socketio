@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="Description" content="Consola de pruebas" />
+		<meta name="Autor" content="Gabriel Sabillón" />
+		<title>Restful Console</title>
+		<link rel="stylesheet" href="?__debugger__=yes&amp;cmd=resource&amp;f=style.css" type="text/css">
+		<link rel="shortcut icon" href="?__debugger__=yes&amp;cmd=resource&amp;f=console.png">
+		<script type="text/javascript" src="?__debugger__=yes&amp;cmd=resource&amp;f=jquery.js"></script>
+	</head>
+	<body >
+		<div class="debugger">
+			<h1>Interactive Api Console</h1>
+			<div class="explanation">
+			In this console you can execute restful querys.
+			</div>
+			<form id="form-query" action="javascript:run()">
+				<label>URI</label>
+				<input type="text" name="uri"/>
+				<select name="query_method">
+					<option value="GET">get</option>
+					<option value="POST">post</option>
+					<option value="PUT">put</option>
+					<option value="DELETE">delete</option>
+				</select>
+				<input type="submit" value="Submit"/>
+				<br>
+				<label>Data:</label>
+				<br>
+				<textarea class="console" name="query_body" rows="5" cols="80"></textarea>
+				<br>
+			</form>
+			<h3>Response</h3>
+			<textarea id="result" class="console" style="color: #000;" name="query_body" rows="5" cols="80" disabled></textarea>
+		</div>
+	</body>
+</html>
+<script>
+	function run(){
+		$.ajax({
+			url:'service_console',
+			type: 'POST',
+			data : $('#form-query').serialize(),
+			success: function(response){
+				$('#result').html(JSON.stringify(response));
+				console.debug(response);
+			}
+		});
+
+	}
+</script>

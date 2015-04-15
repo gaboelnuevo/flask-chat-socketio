@@ -1,0 +1,23 @@
+<ons-page class="center">
+	<ons-toolbar>
+		<div class="left">
+			<ons-toolbar-button ng-click="menu.toggle()">
+				<ons-icon icon="ion-navicon" size="28px" fixed-width="false"></ons-icon>
+			</ons-toolbar-button>
+		</div>
+		<div class="center">Login</div>
+	</ons-toolbar>
+	<div class="login-form" ng-controller="LoginController" name="loginForm" role="form" ng-submit='login()'>
+		<div class="container">
+			<div class="img-container">
+				<img class="img-avatar" src="images/avatar_2x.png"/>
+			</div>
+			<input type="text" ng-model="username" class="text-input--underbar" placeholder="&#xf007; Username" value="">
+			<input type="password" ng-model="password" class="text-input--underbar" placeholder="&#xf023; Password" value="">
+			<br>
+			<ons-button modifier="large" class="login-button" ng-click="login()"> Log In <i class="fa fa-sign-in"></i></ons-button>
+			<br><br>
+			<ons-button modifier="quiet" class="forgot-password">Forgot password?</ons-button>
+		</div>
+	</div>
+</ons-page>
