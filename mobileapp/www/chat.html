@@ -13,6 +13,22 @@
         </ons-toolbar-button>
       </div>
     </ons-toolbar>
+    <div class="navigation-bar">
+          <div class="navigation-bar__center">
+
+            <!-- segment control -->
+            <div class="button-bar" style="width:200px; margin:8px auto 0;">
+              <div class="button-bar__item">
+                <input type="radio" name="navi-segment-a" checked>
+                <div class="button-bar__button">Discover</div>
+              </div>
+              <div class="button-bar__item">
+                <input type="radio" name="navi-segment-a">
+                <div class="button-bar__button">Joined</div>
+              </div>
+            </div>
+          </div>
+    </div>
     <div ng-show="scanning">
   	  <div ng-controller="RadarController" class="radar blink" data-ng-init="init()">
   		       <canvas id="canvas" width="140" height="140"></canvas>
@@ -21,16 +37,36 @@
         <spam class="blink">Scanning...</spam>
       </div>
     </div>
-    <ons-list ng-hide="scanning">
-      <ons-list-item modifier="chevron" ng-repeat="chat in chats" ng-click="getMessages(chat.id)">
-      {{chat.name}}
-      <spam class="right">{{chat.peopleactive}}<i class="fa fa-user"></i></spam>
-      </ons-list-item>
+    <ons-list class="chat-list" ng-hide="scanning">
+          <ons-list-item class="chat-item" modifier="chevron" ng-repeat="chat in chats" ng-click="getMessages(chat.id)">
+            <ons-row>
+			  <ons-col align="center" class="" width="30px">
+				  <div class="icon-status" ng-hide="true">
+					  <ons-icon icon="fa-globe" class="chat-icon"></ons-icon>
+				  </div>
+				  <div class="icon-status" ng-hide="false">
+					  <ons-icon icon="fa-lock" class="chat-icon"></ons-icon>
+				  </div>
+			  </ons-col>
+              <ons-col width="6px" class="chat-focus" ng-style="{chat.joined ? '#3399ff' : '#ccc'}">
+              </ons-col>
+              <ons-col class="info-right">
+                <div class="chat-name">{{chat.name}}</div>
+                <div class="chat-info">
+                    <spam class="info-with-icon"><ons-icon icon="ion-ios-people"></ons-icon> {{chat.peopleactive}}</spam>
+                    <spam class="info-with-icon"><ons-icon icon="ion-chatbubbles"></ons-icon> 158</spam>
+                </div>
+              </ons-col>
+              <ons-col width="50px" class="geo-distance chat-info" align="bottom">
+				  <ons-icon icon="fa-map-marker"></ons-icon> 100m</spam>
+			  </ons-col>
+            </ons-row>
+          </ons-list-item>
     </ons-list>
   </ons-page>
 </ons-navigator>
 <ons-template id="detail.html">
-  <ons-page ng-controller="ChatController" page-scroll-glue="glued" ng-init="init()">
+  <ons-page ng-controller="ChatController" page-scroll-glue="glued" scrolled="scrolled" ng-init="init()">
     <ons-toolbar>
       <div class="left"><ons-back-button>Back</ons-back-button></div>
       <div class="center">Page Detail</div>
@@ -58,7 +94,8 @@
                 <div class="timeline-message" emojify-message>
                   {{msg.body}}
                 </div>
-                <div class="timeline-date" ng-class="{'timeline-date-self': (msg.user.username == me.username)}">3m</div>
+                <div class="timeline-date" ng-class="{'timeline-date-self': (msg.user.username == me.username)}">
+                  <span am-time-ago="{{ msg.create_date | asDate}}"></span></div>
               </div>
             </div>
           </ons-col>
@@ -67,7 +104,7 @@
     </ons-list>
     <ons-bottom-toolbar class="chat-footer">
         <ons-row align="center">
-          <ons-col width="35px"><button class="button button--quiet"><ons-icon icon="fa-smile-o"></ons-icon></button></ons-col>
+          <ons-col width="5px"><button ng-hide="true" class="button button--quiet"><ons-icon icon="fa-smile-o"></ons-icon></button></ons-col>
           <ons-col><div class="chat-message-area"><textarea ng-model="msgbody" ng-disabled="posting" class="textarea" placeholder=""></textarea></div></ons-col>
           <ons-col width="35px"><button class="button button--quiet" ng-disabled="posting" ng-click="PostMsg()"><ons-icon icon="fa-paper-plane" ></ons-icon></button></ons-col>
         </ons-row>

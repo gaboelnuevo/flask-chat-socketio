@@ -68,13 +68,14 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$lo
 
   $scope.PostMsg = function(){
     if (!$scope.posting && $scope.msgbody != "" && angular.isDefined($scope.chat_id)){
+      $scope.posting = true;
       var msg = new Message;
       msg.body = $scope.msgbody;
-      $scope.posting = true;
+      $scope.msgbody = "";
       msg.$save({chat_id : $scope.chat_id}, function(data){
-        $scope.posting = false;
         $scope.scrollTo();
         $scope.reset();
+        $scope.posting = false;
         fetch_new_msg();
       });
     }else{
@@ -95,6 +96,10 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$lo
         last_id = $scope.messages[($scope.messages.length -1)].id;
         MessageList.get({chat_id: $scope.chat_id, after_id: last_id}, function(data){
           angular.forEach(data.messages, function(msg,index) {
+            $scope.glued = $scope.scrolled;
+            $timeout(function(){
+              $scope.glued = false;
+            }, 2000);
             $scope.messages.push(msg);
             //$anchorScroll();
           });

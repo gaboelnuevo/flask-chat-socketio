@@ -13,9 +13,12 @@ var clientSecret = "gfNzhsdGMx41yFq8Vh79oHZYCYyPlF0k3rjNribHeP7BEUgXhl";
 	angular.module('App', [
 		'ngResource',
 		'ngAnimate',
+		'angularMoment',
 		'onsen',
 		'App.directives.scrollGlue',
+		'App.directives.scrolled',
 		'App.directives.emojifymsg',
+		'App.filters.asdate',
 		'App.services.Resources',
 		'App.controllers.Login',
 		'App.controllers.Main',

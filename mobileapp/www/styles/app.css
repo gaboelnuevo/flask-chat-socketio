@@ -385,3 +385,67 @@ ons-list-item.ng-enter-active {
   font-size: 14px;
   opacity: 0.4;
 }
+
+/*chat list*/
+.chat-list {
+	border-top: none;
+	background-image: none !important;
+}
+
+.chat-item {
+	line-height: 1;
+	padding: 0;
+}
+
+.info-left {
+	text-align: right;
+	padding: 10px 10px 10px 0;
+	margin-right: 30px;
+}
+
+.chat-focus {
+	background-color: #3399ff;
+	opacity: 0.5;
+}
+
+.info-right {
+	padding: 10px 40px 10px 10px;
+}
+
+.plan-date {
+	font-size: 14px;
+	opacity: 0.8;
+	margin-bottom: 4px;
+	font-weight: 500;
+}
+
+.chat-icon {
+	margin-top: 12px;
+	opacity: 0.4;
+}
+
+.chat-name {
+	font-size: 17px;
+	margin-bottom: 8px;
+}
+
+.chat-info {
+	opacity: 0.4;
+	font-size: 12px;
+	line-height: 1.4;
+}
+
+.info-with-icon{
+	margin-right: 6px;
+	float: left;
+}
+
+.geo-distance {
+	margin-right: 30px;
+	margin-bottom: 10px;
+}
+
+.icon-status{
+	float: right;
+	margin-right: 5px;
+}

@@ -42,7 +42,7 @@ msg_fields = {
 class ChatList(Resource):
     def get(self):
         chats = []
-        q = ChatModel.query.all()
+        q = ChatModel.query.filter(ChatModel.haversine(0.0, 0.0) < 10)
         for chat in q:
             chats.append(chat.toCustomDict(merge={'joined':chat.isUserJoined(request.oauth.user.id)}))
         return jsonify(result = chats)
@@ -97,7 +97,7 @@ class MessagesList(Resource):
         args = parser.parse_args()
         messages = []
         chat = ChatModel.query.filter(ChatModel.id == chat_id).first_or_404()
-        if not chat.isUserJoined(request.oauth.user.id):
+        if chat.is_private and not chat.isUserJoined(request.oauth.user.id):
             abort(401)
         q = MessagesModel.query
         q = q.filter(MessagesModel.chat_id == chat_id)

@@ -11,6 +11,23 @@ from hashlib import sha512
 from random import SystemRandom
 from flask.ext.login import UserMixin
 
+from math import radians, cos, sin, asin, sqrt #for haversine
+
+def haversine(lon1,lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians
+    lon1, lat1, lon2, lat2 = map(radians, [lon1,lat1,lon2, lat2])
+    # haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+    r = 6371 # Radius of earth in kilometers. Use 3956 for miles
+    return c * r
+
 class User(UserMixin, db.Model, DictMapper):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True)
@@ -178,47 +195,6 @@ class Contry(db.Model, DictMapper):
     def defineMapper(self):
         pass
 
-#class Currency(db.Model, DictMapper):
-#    id = db.Column(db.Integer, primary_key=True)
-#    name = db.Column(db.String(55), nullable=False)
-#    symbol = db.Column(db.String(5), nullable=False)
-#    abbr = db.Column(db.String(5), nullable=False)
-
-# ChatUsersDetail = db.Table('chatusersdetail',
-#     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-#     db.Column('chat_id', db.Integer, db.ForeignKey('chat.id'))
-# )
-#
-# class Chat(db.Model, DictMapper):
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(55), nullable=False)
-#     user_id = db.Column(db.ForeignKey('user.id'))
-#     user = db.relationship('User')
-#     create_date = db.Column(db.DateTime, default=date_time.utcnow)
-#     users = db.relationship('User', secondary=ChatUsersDetail,backref = db.backref('chats', lazy='dynamic'))
-#
-#     def __init__(self, name, user_id):
-#         self.name = name
-#         self.user_id = user_id
-#
-#     @mapperConfig(only=['id', 'name'])
-#     def defineMapper(self):
-#         pass
-#
-# class Messages(db.Model, DictMapper):
-#     id = db.Column(db.Integer, primary_key=True)
-#     chat_id = db.Column(db.ForeignKey('chat.id'))
-#     chat = db.relationship('Chat')
-#     body = db.Column(db.String(160), nullable=False)
-#     user_id = db.Column(db.ForeignKey('user.id'))
-#     user = db.relationship('User')
-#     create_date = db.Column(db.DateTime, default=date_time.utcnow)
-#
-#     def __init__(self, chat_id, user_id, body):
-#         self.chat_id = chat_id
-#         self.body = body
-#         self.user_id = user_id
-
 class ChatUsersDetail(db.Model, DictMapper):
     __tablename__ = 'chatusersdetail'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'),primary_key=True)
@@ -241,6 +217,9 @@ class Chat(db.Model, DictMapper):
     user = db.relationship('User')
     create_date = db.Column(db.DateTime, default=date_time.utcnow)
     users = association_proxy('ChatUsersDetail', 'user')
+    is_private = db.Column(db.Boolean, unique=False, default=False)
+    longitude = db.Column(db.Float)
+    latitude = db.Column(db.Float)
 
     def __init__(self, name, user_id):
         self.name = name
@@ -250,9 +229,17 @@ class Chat(db.Model, DictMapper):
     def peopleactive(self):
         return len(self.users)
 
+    @hybrid_property
+    def messages_count(self):
+        return Messages.query.filter(Messages.chat_id == self.id).count()
+
     @hybrid_method
     def get_messages(self):
         return Messages.query.filter(Messages.chat_id == self.id).all()
+
+    @hybrid_method
+    def haversine(self,lon, lat):
+        return haversine(self.lon,self.lat, lon, lat)
 
     @hybrid_method
     def isUserJoined(self, user_id):
@@ -261,8 +248,7 @@ class Chat(db.Model, DictMapper):
                 return True
         return False
 
-
-    @mapperConfig(only=['id', 'name','peopleactive'])
+    @mapperConfig(only=['id', 'name','peopleactive', 'is_private', 'messages_count', 'longitude', 'latitude'])
     def defineMapper(self):
         pass
 
