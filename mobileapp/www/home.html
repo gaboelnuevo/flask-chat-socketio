@@ -18,7 +18,7 @@
 </ons-navigator>
 
 <ons-template id="page1.html">
-  <ons-page>
+  <ons-page  ng-controller="GeoCtrl" ng-init="init()">
     <ons-toolbar>
       <div class="left"><ons-back-button>Back</ons-back-button></div>
       <div class="center">Page 2</div>
@@ -29,6 +29,7 @@
       <ons-button modifier="light" onclick="myNavigator.popPage()">
         Pop Page
       </ons-button>
+      {{lat}}, {{lon}} 
     </div>
   </ons-page>
 </ons-template>

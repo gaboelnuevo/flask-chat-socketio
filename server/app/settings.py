@@ -17,12 +17,12 @@ class CustomJSONEncoder(JSONEncoder):
         try:
             #Custom Dateformat
             if isinstance(obj, datetime):
-                if obj.utcoffset() is not None:
-                    obj = obj - obj.utcoffset()
-                millis = int(
-                    calendar.timegm(obj.timetuple()) * 1000 +
-                    obj.microsecond / 1000
-                )
+                # if obj.utcoffset() is not None:
+                #     obj = obj - obj.utcoffset()
+                # millis = int(
+                #     calendar.timegm(obj.timetuple()) * 1000 +
+                #     obj.microsecond / 1000
+                # )
                 return obj.strftime('%Y-%m-%dT%H:%M:%S') #millis or obj.strftime('%Y-%m-%dT%H:%M:%S')
             iterable = iter(obj)
         except TypeError:

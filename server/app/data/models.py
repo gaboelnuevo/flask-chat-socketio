@@ -8,25 +8,20 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from hashlib import sha512
 #from backports.pbkdf2 import pbkdf2_hmac, compare_digest
 
+from sqlalchemy import func
+
 from random import SystemRandom
 from flask.ext.login import UserMixin
 
-from math import radians, cos, sin, asin, sqrt #for haversine
+import math
 
-def haversine(lon1,lat1, lon2, lat2):
-    """
-    Calculate the great circle distance between two points
-    on the earth (specified in decimal degrees)
-    """
-    # convert decimal degrees to radians
-    lon1, lat1, lon2, lat2 = map(radians, [lon1,lat1,lon2, lat2])
-    # haversine formula
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
-    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
-    c = 2 * asin(sqrt(a))
-    r = 6371 # Radius of earth in kilometers. Use 3956 for miles
-    return c * r
+def haversine(lat1, lon1, lat2, lon2):
+    dlat = math.radians(lat2-lat1)
+    dlon = math.radians(lon2-lon1)
+    a = math.sin(dlat/2) * math.sin(dlat/2) + math.cos(math.radians(lat1)) \
+    * math.cos(math.radians(lat2)) * math.sin(dlon/2) * math.sin(dlon/2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    return c
 
 class User(UserMixin, db.Model, DictMapper):
     id = db.Column(db.Integer, primary_key=True)
@@ -218,12 +213,14 @@ class Chat(db.Model, DictMapper):
     create_date = db.Column(db.DateTime, default=date_time.utcnow)
     users = association_proxy('ChatUsersDetail', 'user')
     is_private = db.Column(db.Boolean, unique=False, default=False)
-    longitude = db.Column(db.Float)
     latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
 
-    def __init__(self, name, user_id):
+    def __init__(self, name, user_id, latitude, longitude):
         self.name = name
         self.user_id = user_id
+        self.latitude = latitude
+        self.longitude = longitude
 
     @hybrid_property
     def peopleactive(self):
@@ -239,7 +236,11 @@ class Chat(db.Model, DictMapper):
 
     @hybrid_method
     def haversine(self,lon, lat):
-        return haversine(self.lon,self.lat, lon, lat)
+         return haversine(self.lon,self.lat, lon, lat)
+
+    @haversine.expression
+    def haversine(cls, lat, lon):
+        return func.haversine(cls.latitude, cls.longitude, lat, lon)
 
     @hybrid_method
     def isUserJoined(self, user_id):
@@ -260,7 +261,6 @@ class Messages(db.Model, DictMapper):
     user_id = db.Column(db.ForeignKey('user.id'))
     user = db.relationship('User')
     create_date = db.Column(db.DateTime, default=date_time.utcnow)
-
     def __init__(self, chat_id, user_id, body):
         self.chat_id = chat_id
         self.body = body

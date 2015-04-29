@@ -1,2 +1,7 @@
-*.sqlite
 *.pyc
+*.db
+migrations/
+venv/
+build/
+dist/
+*.egg-info/

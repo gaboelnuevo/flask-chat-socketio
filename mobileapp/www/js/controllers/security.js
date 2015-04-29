@@ -40,7 +40,7 @@ appCtrlsSecureSecure.factory('httpResponseErrorInterceptor',function($q, $inject
       if (response.status===401 && response.data.error && response.data.error === "invalid_token") {
         // should retry
         if ($rootScope.oauth){
-			refresh_token = $rootScope.oauth.refresh_token
+			refresh_token = $rootScope.oauth.refresh_token;
 			var $http = $injector.get('$http');
 			$http({
 				method: 'GET',

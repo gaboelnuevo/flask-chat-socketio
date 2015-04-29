@@ -20,6 +20,8 @@ from sqlalchemy.orm import eagerload
 
 parser_chat = reqparse.RequestParser()
 parser_chat.add_argument('name', type=str, required=True,help="Name cannot be blank!")
+parser_chat.add_argument('latitude', type=str, required=True,help="latitude cannot be blank!")
+parser_chat.add_argument('longitude', type=str, required=True,help="longitude cannot be blank!")
 
 parser_msg = reqparse.RequestParser()
 parser_msg.add_argument('body', type=str, required=True,help="Body cannot be blank!")
@@ -41,8 +43,12 @@ msg_fields = {
 
 class ChatList(Resource):
     def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('latitude', type=float, location='args', required=True, help = 'Unknown address')
+        parser.add_argument('longitude', type=float, location='args', required=True, help = 'Unknown address')
+        args = parser.parse_args()
         chats = []
-        q = ChatModel.query.filter(ChatModel.haversine(0.0, 0.0) < 10)
+        q = ChatModel.query.filter(ChatModel.haversine(args['latitude'], args['longitude'])*111.045 < 10)
         for chat in q:
             chats.append(chat.toCustomDict(merge={'joined':chat.isUserJoined(request.oauth.user.id)}))
         return jsonify(result = chats)
@@ -50,7 +56,7 @@ class ChatList(Resource):
     @marshal_with(chat_fields)
     def post(self):
         args = parser_chat.parse_args()
-        chat = ChatModel(args['name'], request.oauth.user.id)
+        chat = ChatModel(args['name'], request.oauth.user.id, args['latitude'], args['longitude'])
         db.session.add(chat)
         chat.users.append(request.oauth.user)
         db.session.commit()

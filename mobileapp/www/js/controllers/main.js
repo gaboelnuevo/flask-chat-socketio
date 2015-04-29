@@ -1,5 +1,5 @@
 
-appCtrlsMain = angular.module('App.controllers.Main', []);
+var appCtrlsMain = angular.module('App.controllers.Main', []);
 
 appCtrlsMain.controller('MainController', function($scope, $rootScope){
   $scope.dialogs = {};
@@ -13,29 +13,55 @@ appCtrlsMain.controller('MainController', function($scope, $rootScope){
     else {
       $scope.dialogs[dlg].show();
     }
-  }
+  };
 });
 
-appCtrlsMain.controller('ChatListController', function($scope,$rootScope, $timeout, ChatList){
-  $scope.scanning = true;
-  $scope.childLoad = null;
-  $timeout(callAtTimeout, 4000);
-
-  $scope.init = function () {
-    ChatList.get({}, function(data) {
-      $scope.chats = data.result;
+appCtrlsMain.controller('GeoCtrl', function($scope,getCurrentPosition) {
+  $scope.init = function(){
+    ons.notification.alert({message: 'probando!'});
+    getCurrentPosition(function(position){
+      $scope.lat  = position.coords.latitude;
+      $scope.lon = position.coords.longitude;
+    },function(){
+        ons.notification.alert({message: 'Error al obtener position geografica!'});
     });
   };
+});
+
+
+appCtrlsMain.controller('ChatListController', function($scope,$rootScope, $timeout, ChatList, getCurrentPosition){
+  $scope.scanning = false;
+  $scope.childLoad = null;
+  
+  $scope.init = function () {
+    $scope.discovery(); 
+  };
+
+  $scope.discovery = function() {
+    $scope.scanning = true;
+    $timeout(callAtTimeout, 4000);
+    getCurrentPosition(function(position){
+      console.log(position.coords.latitude);
+      console.log(position.coords.longitude); 
+      ChatList.get({
+          latitude: position.coords.latitude, 
+          longitude: position.coords.longitude},
+        function(data) {
+          $scope.chats = data.result;
+        });
+    },function(){
+        ons.notification.alert({message: 'Error: Unable to retreive position!'});
+    });
+  }
 
   $scope.getMessages = function(id){
     $scope.chat_id = id;
-    myNavigator.pushPage('detail.html', { animation : 'slide' } );
+    myNavigator.pushPage('detail.html', { animation : 'slide' });
   };
-
+    
   function callAtTimeout() {
     $scope.scanning = false;
   }
-
 });
 
 appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$location,$anchorScroll, Me, MessageList, Message){
@@ -67,9 +93,9 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$lo
   };
 
   $scope.PostMsg = function(){
-    if (!$scope.posting && $scope.msgbody != "" && angular.isDefined($scope.chat_id)){
+    if (!$scope.posting && $scope.msgbody !== "" && angular.isDefined($scope.chat_id)){
       $scope.posting = true;
-      var msg = new Message;
+      var msg = new Message();
       msg.body = $scope.msgbody;
       $scope.msgbody = "";
       msg.$save({chat_id : $scope.chat_id}, function(data){
@@ -93,7 +119,7 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$lo
   function fetch_new_msg(){
     if (angular.isDefined($scope.chat_id)){
       if($scope.messages.length >= 1){
-        last_id = $scope.messages[($scope.messages.length -1)].id;
+        var last_id = $scope.messages[($scope.messages.length -1)].id;
         MessageList.get({chat_id: $scope.chat_id, after_id: last_id}, function(data){
           angular.forEach(data.messages, function(msg,index) {
             $scope.glued = $scope.scrolled;
@@ -108,7 +134,7 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$lo
         $scope.getMessages();
       }
     }
-  };
+  }
 
   function load(){
     Me.get({}, function(data){
@@ -120,7 +146,7 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$lo
     if($scope.intervalPromise)
           $interval.cancel($scope.intervalPromise);
     });
-  };
+  }
 
   $scope.reset = function() {
     $scope.msgbody = "";

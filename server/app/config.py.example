@@ -15,8 +15,9 @@ PORT = int(os.environ.get('OPENSHIFT_PYTHON_PORT',8080))
 
 # Define the database - we are working with
 # SQLite for this example
-#SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'app.db')
-SQLALCHEMY_DATABASE_URI = os.environ.get('OPENSHIFT_MYSQL_DB_URL', 'mysql://root@localhost/') + os.environ.get('OPENSHIFT_APP_NAME', 'airchatdev')
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'app.db')
+# Or mysql
+# SQLALCHEMY_DATABASE_URI = os.environ.get('OPENSHIFT_MYSQL_DB_URL', 'mysql://root:password@localhost/') + os.environ.get('OPENSHIFT_APP_NAME', 'dev_dbname')
 #DATABASE_CONNECT_OPTIONS = {}
 
 # Application threads. A common general assumption is

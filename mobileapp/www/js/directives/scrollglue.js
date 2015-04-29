@@ -22,7 +22,7 @@
                     return getter(scope);
                 },
                 setValue: function(){}
-            }
+            };
         }
 
         function twoWayBindingState(getter, setter, scope){
