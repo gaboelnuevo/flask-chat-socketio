@@ -41,8 +41,6 @@ appCtrlsMain.controller('ChatListController', function($scope,$rootScope, $timeo
     $scope.scanning = true;
     $timeout(callAtTimeout, 4000);
     getCurrentPosition(function(position){
-      console.log(position.coords.latitude);
-      console.log(position.coords.longitude); 
       ChatList.get({
           latitude: position.coords.latitude, 
           longitude: position.coords.longitude},
@@ -66,6 +64,7 @@ appCtrlsMain.controller('ChatListController', function($scope,$rootScope, $timeo
 
 appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$location,$anchorScroll, Me, MessageList, Message){
   $scope.glued = false;
+  $scope.fetching = false;
   $scope.init = function () {
     $scope.messages = [];
     $scope.chat_id = $scope.$parent.chat_id;
@@ -77,7 +76,6 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$lo
         if($scope.messages.length >= 1){
           var first_id = $scope.messages[0].id;
           MessageList.get({chat_id: $scope.chat_id, before_id: first_id, limit: 5}, function(data){
-            console.log(data);
             $scope.messages.unshift.apply($scope.messages, data.messages);
           });
         }
@@ -87,8 +85,9 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$lo
 
   $scope.getMessages = function(){
     $scope.messages = [];
-    MessageList.get({chat_id: $scope.chat_id, limit: 20}, function(data){
+    MessageList.get({chat_id: $scope.chat_id, limit: 10}, function(data){
       $scope.messages = data.messages;
+      $scope.scrollTo();
     });
   };
 
@@ -99,10 +98,10 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$lo
       msg.body = $scope.msgbody;
       $scope.msgbody = "";
       msg.$save({chat_id : $scope.chat_id}, function(data){
-        $scope.scrollTo();
         $scope.reset();
-        $scope.posting = false;
         fetch_new_msg();
+        $scope.scrollTo();
+        $scope.posting = false;
       });
     }else{
       $scope.posting = false;
@@ -117,22 +116,24 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$lo
   };
 
   function fetch_new_msg(){
-    if (angular.isDefined($scope.chat_id)){
-      if($scope.messages.length >= 1){
-        var last_id = $scope.messages[($scope.messages.length -1)].id;
-        MessageList.get({chat_id: $scope.chat_id, after_id: last_id}, function(data){
-          angular.forEach(data.messages, function(msg,index) {
-            $scope.glued = $scope.scrolled;
-            $timeout(function(){
-              $scope.glued = false;
-            }, 2000);
-            $scope.messages.push(msg);
-            //$anchorScroll();
-          });
-        });
-      }else{
-        $scope.getMessages();
-      }
+    if($scope.fetching == false){
+        $scope.fetching = true;
+        if (angular.isDefined($scope.chat_id)){
+          if($scope.messages.length >= 1){
+            var last_id = $scope.messages[($scope.messages.length -1)].id;
+            MessageList.get({chat_id: $scope.chat_id, after_id: last_id}, function(data){
+              angular.forEach(data.messages, function(msg,index) {
+                if($scope.scrolled){
+                    $scope.scrollTo();
+                }
+                $scope.messages.push(msg);
+              });
+            });
+          }else{
+            $scope.getMessages();
+          }
+        }
+        $scope.fetching = false;
     }
   }
 

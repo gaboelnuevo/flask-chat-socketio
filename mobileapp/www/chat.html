@@ -41,24 +41,26 @@
           <ons-list-item class="chat-item" modifier="chevron" ng-repeat="chat in chats" ng-click="getMessages(chat.id)">
             <ons-row>
 			  <ons-col align="center" class="" width="30px">
-				  <div class="icon-status" ng-hide="true">
+				  <div class="icon-status" ng-hide="chat.is_private">
 					  <ons-icon icon="fa-globe" class="chat-icon"></ons-icon>
 				  </div>
-				  <div class="icon-status" ng-hide="false">
+				  <div class="icon-status" ng-show="chat.is_private">
 					  <ons-icon icon="fa-lock" class="chat-icon"></ons-icon>
 				  </div>
 			  </ons-col>
-              <ons-col width="6px" class="chat-focus" ng-style="{chat.joined ? '#3399ff' : '#ccc'}">
+              <ons-col width="6px" class="chat-focus" style="backgroud: #3399ff;">
               </ons-col>
               <ons-col class="info-right">
                 <div class="chat-name">{{chat.name}}</div>
                 <div class="chat-info">
-                    <spam class="info-with-icon"><ons-icon icon="ion-ios-people"></ons-icon> {{chat.peopleactive}}</spam>
-                    <spam class="info-with-icon"><ons-icon icon="ion-chatbubbles"></ons-icon> 158</spam>
+                    <spam class="info-with-icon"><ons-icon icon="ion-ios-people"></ons-icon>                                        {{chat.peopleactive}}
+                    </spam>
+                    <spam class="info-with-icon"><ons-icon icon="ion-chatbubbles"></ons-icon>
+                        {{chat.messages_count}}</spam>
                 </div>
               </ons-col>
               <ons-col width="50px" class="geo-distance chat-info" align="bottom">
-				  <ons-icon icon="fa-map-marker"></ons-icon> 100m</spam>
+				  <ons-icon icon="fa-map-marker"></ons-icon> {{chat.distance_in_meters}}m</spam>
 			  </ons-col>
             </ons-row>
           </ons-list-item>

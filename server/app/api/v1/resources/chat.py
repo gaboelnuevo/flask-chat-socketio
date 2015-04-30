@@ -13,6 +13,8 @@ from flask import abort
 from ....data.models import Chat as ChatModel, Messages as MessagesModel
 from ....data import mydb as db
 
+from ....lib.functions import haversine
+
 from sqlalchemy.sql import and_, or_
 from sqlalchemy.orm import eagerload
 
@@ -48,9 +50,9 @@ class ChatList(Resource):
         parser.add_argument('longitude', type=float, location='args', required=True, help = 'Unknown address')
         args = parser.parse_args()
         chats = []
-        q = ChatModel.query.filter(ChatModel.haversine(args['latitude'], args['longitude'])*111.045 < 10)
+        q = ChatModel.query.filter(ChatModel.haversine(args['latitude'], args['longitude'])*111.045 < 0.075)
         for chat in q:
-            chats.append(chat.toCustomDict(merge={'joined':chat.isUserJoined(request.oauth.user.id)}))
+            chats.append(chat.toCustomDict(merge={'joined':chat.isUserJoined(request.oauth.user.id),'distance_in_meters': chat.haversine(args['latitude'], args['longitude'])*111.045}))
         return jsonify(result = chats)
 
     @marshal_with(chat_fields)

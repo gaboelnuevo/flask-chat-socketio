@@ -1,5 +1,6 @@
 from . import mydb as db
 from . import DictMapper, mapper, mapperConfig
+from ..lib.functions import haversine
 from datetime import datetime as date_time
 
 
@@ -12,16 +13,6 @@ from sqlalchemy import func
 
 from random import SystemRandom
 from flask.ext.login import UserMixin
-
-import math
-
-def haversine(lat1, lon1, lat2, lon2):
-    dlat = math.radians(lat2-lat1)
-    dlon = math.radians(lon2-lon1)
-    a = math.sin(dlat/2) * math.sin(dlat/2) + math.cos(math.radians(lat1)) \
-    * math.cos(math.radians(lat2)) * math.sin(dlon/2) * math.sin(dlon/2)
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
-    return c
 
 class User(UserMixin, db.Model, DictMapper):
     id = db.Column(db.Integer, primary_key=True)
@@ -235,8 +226,8 @@ class Chat(db.Model, DictMapper):
         return Messages.query.filter(Messages.chat_id == self.id).all()
 
     @hybrid_method
-    def haversine(self,lon, lat):
-         return haversine(self.lon,self.lat, lon, lat)
+    def haversine(self,lat, lon):
+         return haversine(self.latitude,self.longitude, lat, lon)
 
     @haversine.expression
     def haversine(cls, lat, lon):
