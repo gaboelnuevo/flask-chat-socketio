@@ -1,17 +1,16 @@
-<ons-dialog var="dialog" cancelable>
+<ons-dialog var="dialog" cancelable ng-controller="NewChatController">
 	<ons-toolbar inline>
 		<div class="center">
 			New Chat
 		</div>
 	</ons-toolbar>
-
 	<p>
-		<input placeholder="Chat Name" id="name" class="text-input">
+		<input placeholder="Chat Name" ng-model="chatname" class="text-input">
 	</p>
 	<p>
-		Public: <ons-switch class="float-right" checked></ons-switch>
+		Public: <ons-switch class="float-right" ng-model="is_public" checked></ons-switch>
 	</p>
 	<p>
-		<ons-button modifier="large" ng-click="dialog.hide()">Create</ons-button>
+		<ons-button modifier="large" ng-click="newChat()">Create</ons-button>
 	</p>
 </ons-dialog>

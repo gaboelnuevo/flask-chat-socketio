@@ -4,7 +4,7 @@
     "creationData": {
       "projectTypeName": "com.intel.xdk.projecttype.jsapp",
       "projectGuid": "024cbda6-98ed-4088-9aac-396502d49a99",
-      "lastModifiedDate": 1430195695639,
+      "lastModifiedDate": 1430580627264,
       "creationDate": 1430105300772
     },
     "XDK-app-designer": "false",
@@ -16,20 +16,6 @@
     "serviceMethods": [],
     "cordovaPluginsDirectory": "plugins",
     "cordovaPlugins": [
-      {
-        "id": "org.apache.cordova.device",
-        "version": "0.2.13",
-        "selectedState": "Included",
-        "data": {},
-        "paramvals": {}
-      },
-      {
-        "id": "org.apache.cordova.splashscreen",
-        "version": "0.3.5",
-        "selectedState": "Included",
-        "data": {},
-        "paramvals": {}
-      },
       {
         "id": "org.apache.cordova.geolocation",
         "version": "0.3.11",

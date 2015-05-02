@@ -6,7 +6,7 @@
     "projectDirectories": {},
     "initialAutoPluginCount": 0,
     "currentService": {
-      "service": "OpenTable"
+      "service": "bing_search"
     }
   }
 }

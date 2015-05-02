@@ -1,4 +1,4 @@
-<ons-navigator var="myNavigator">
+<ons-navigator var="myNavigator" ng-controller="SettingsController">
 	<ons-page>
 		<ons-toolbar>
 			<div class="left">
@@ -14,8 +14,8 @@
 			</ons-col>
 
 			<ons-col>
-				<div class="settings-profile-name">Dave Graham</div>
-				<div class="settings-profile-email">davegraham@example.com</div>
+				<div class="settings-profile-name">{{me.name}}</div>
+				<div class="settings-profile-email">{{me.email}}</div>
 			</ons-col>
 
 		</ons-row>

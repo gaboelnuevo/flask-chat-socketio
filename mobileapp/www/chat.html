@@ -71,12 +71,12 @@
   <ons-page ng-controller="ChatController" page-scroll-glue="glued" scrolled="scrolled" ng-init="init()">
     <ons-toolbar>
       <div class="left"><ons-back-button>Back</ons-back-button></div>
-      <div class="center">Page Detail</div>
+      <div class="center">Chat Messagges</div>
     </ons-toolbar>
     <ons-pull-hook ng-action="load_olds($done)" var="loader">
         <span ng-switch="loader.getCurrentState()">
-          <span ng-switch-when="initial"><ons-icon size="35px" icon="ion-arrow-down-a"></ons-icon> Pull down to refresh</span>
-          <span ng-switch-when="preaction"><ons-icon size="35px" icon="ion-arrow-up-a"></ons-icon> Release to refresh</span>
+          <span ng-switch-when="initial"><ons-icon size="35px" icon="ion-arrow-down-a"></ons-icon> Pull down to fetch old messagges</span>
+          <span ng-switch-when="preaction"><ons-icon size="35px" icon="ion-arrow-up-a"></ons-icon> Release to get messages</span>
           <span ng-switch-when="action"><ons-icon size="35px" spin="true" icon="ion-load-d"></ons-icon> Loading data...</span>
         </span>
     </ons-pull-hook>
@@ -108,7 +108,7 @@
         <ons-row align="center">
           <ons-col width="5px"><button ng-hide="true" class="button button--quiet"><ons-icon icon="fa-smile-o"></ons-icon></button></ons-col>
           <ons-col><div class="chat-message-area"><textarea ng-model="msgbody" ng-disabled="posting" class="textarea" placeholder=""></textarea></div></ons-col>
-          <ons-col width="35px"><button class="button button--quiet" ng-disabled="posting" ng-click="PostMsg()"><ons-icon icon="fa-paper-plane" ></ons-icon></button></ons-col>
+          <ons-col width="35px"><button class="button button--quiet" ng-disabled="posting || msgbody ===''" ng-click="PostMsg()"><ons-icon icon="fa-paper-plane" ></ons-icon></button></ons-col>
         </ons-row>
     </ons-bottom-toolbar>
   </ons-page>

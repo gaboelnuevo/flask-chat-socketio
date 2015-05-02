@@ -2,6 +2,8 @@
 var appCtrlsMain = angular.module('App.controllers.Main', []);
 
 appCtrlsMain.controller('MainController', function($scope, $rootScope){
+  $scope.logged = true;
+  //$scope.logged = ($rootScope.oauth  != undefined) && ($rootScope.oauth  != null);
   $scope.dialogs = {};
   $scope.showDialog = function(dlg) {
     if (!$scope.dialogs[dlg]) {
@@ -13,6 +15,23 @@ appCtrlsMain.controller('MainController', function($scope, $rootScope){
     else {
       $scope.dialogs[dlg].show();
     }
+  };
+});
+
+appCtrlsMain.controller('NewChatController', function($scope, $rootScope, getCurrentPosition, Chat){
+  $scope.newChat = function(){
+    var chat = new Chat();
+    getCurrentPosition(function(position){
+        chat.name = $scope.chatname;
+        chat.latitude  = position.coords.latitude;
+        chat.longitude = position.coords.longitude;
+        chat.$save({}, function(data){
+            ons.notification.alert({message: 'Guardado!'});
+        });
+    },function(){
+        ons.notification.alert({message: 'Error al obtener position geografica!'});
+    });
+    dialog.hide();
   };
 });
 
@@ -62,9 +81,16 @@ appCtrlsMain.controller('ChatListController', function($scope,$rootScope, $timeo
   }
 });
 
-appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$location,$anchorScroll, Me, MessageList, Message){
+appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval, Me, MessageList, Message){
   $scope.glued = false;
   $scope.fetching = false;
+  $scope.msgbody = "";
+  //$scope.intervalPromise = $interval(fetch_new_msg,3000, false);
+  /*myNavigator.on('prepop', function(event) {
+    var page = event.currentPage; // Get current page object
+    if($scope.intervalPromise)
+      $interval.cancel($scope.intervalPromise);
+  });*/
   $scope.init = function () {
     $scope.messages = [];
     $scope.chat_id = $scope.$parent.chat_id;
@@ -103,16 +129,17 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$lo
         $scope.scrollTo();
         $scope.posting = false;
       });
-    }else{
-      $scope.posting = false;
     }
   };
 
   $scope.scrollTo = function() {
     $scope.glued = true;
-    $timeout(function(){
+    var scrollPromise = $timeout(function(){
       $scope.glued = false;
     }, 2000);
+    $scope.$on('$destroy', function(){
+        $timeout.cancel(scrollPromise);
+    });
   };
 
   function fetch_new_msg(){
@@ -131,6 +158,7 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$lo
             });
           }else{
             $scope.getMessages();
+            $scope.fetching = false;
           }
         }
         $scope.fetching = false;
@@ -140,12 +168,7 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval,$lo
   function load(){
     Me.get({}, function(data){
       $scope.me = data;
-    });
-    $scope.getMessages();
-    $scope.intervalPromise = $interval(fetch_new_msg,3000, false);
-    $scope.$on('$destroy',function(){
-    if($scope.intervalPromise)
-          $interval.cancel($scope.intervalPromise);
+      $scope.getMessages();
     });
   }
 
@@ -207,4 +230,16 @@ appCtrlsMain.controller('RadarController', function($scope){
 
     setInterval(drawScene, 1000); // loop drawScene
   };
+});
+
+appCtrlsMain.controller('SettingsController', function($scope, Me){
+    Me.get({}, function(data){
+      $scope.me = data;
+    });
+});
+
+appCtrlsMain.controller('ProfileController', function($scope, Me){
+    Me.get({}, function(data){
+      $scope.user = data;
+    });
 });

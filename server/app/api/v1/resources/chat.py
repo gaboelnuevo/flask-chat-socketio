@@ -24,6 +24,7 @@ parser_chat = reqparse.RequestParser()
 parser_chat.add_argument('name', type=str, required=True,help="Name cannot be blank!")
 parser_chat.add_argument('latitude', type=str, required=True,help="latitude cannot be blank!")
 parser_chat.add_argument('longitude', type=str, required=True,help="longitude cannot be blank!")
+parser_chat.add_argument('is_private', type=bool, default=False)
 
 parser_msg = reqparse.RequestParser()
 parser_msg.add_argument('body', type=str, required=True,help="Body cannot be blank!")
@@ -58,7 +59,7 @@ class ChatList(Resource):
     @marshal_with(chat_fields)
     def post(self):
         args = parser_chat.parse_args()
-        chat = ChatModel(args['name'], request.oauth.user.id, args['latitude'], args['longitude'])
+        chat = ChatModel(args['name'], request.oauth.user.id, args['latitude'], args['longitude'], args['is_private'])
         db.session.add(chat)
         chat.users.append(request.oauth.user)
         db.session.commit()

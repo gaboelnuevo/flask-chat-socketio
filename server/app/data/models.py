@@ -1,8 +1,7 @@
 from . import mydb as db
-from . import DictMapper, mapper, mapperConfig
 from ..lib.functions import haversine
+from ..lib.dictmapper import DictMapper, mapper, mapperConfig
 from datetime import datetime as date_time
-
 
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -64,7 +63,7 @@ class User(UserMixin, db.Model, DictMapper):
     def __repr__(self):
         return "<User #{:d}>".format(self.id)
 
-    @mapperConfig(only=['id', 'name', 'username'], exclude=['password','contry_id'])
+    @mapperConfig(only=['id', 'name', 'username', 'email', 'contry'], exclude=['password','contry_id'])
     def defineMapper(self):
         pass
 
@@ -207,11 +206,12 @@ class Chat(db.Model, DictMapper):
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
 
-    def __init__(self, name, user_id, latitude, longitude):
+    def __init__(self, name, user_id, latitude, longitude, is_private=False):
         self.name = name
         self.user_id = user_id
         self.latitude = latitude
         self.longitude = longitude
+        self.is_private = is_private
 
     @hybrid_property
     def peopleactive(self):
@@ -229,7 +229,7 @@ class Chat(db.Model, DictMapper):
     def haversine(self,lat, lon):
          return haversine(self.latitude,self.longitude, lat, lon)
 
-    @haversine.expression
+    @haversine.expression #need haversine function installed in db
     def haversine(cls, lat, lon):
         return func.haversine(cls.latitude, cls.longitude, lat, lon)
 
