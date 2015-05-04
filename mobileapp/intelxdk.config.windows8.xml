@@ -4,7 +4,7 @@
 <!--To change the contents of this file, see the documentation on the intelxdk.config.additions.xml file.-->
 <intelxdk:version value="1.0"/>
 <intelxdk:cordova-cli version="4.1.2"/>
-<name>airchat</name>
+<name>mobileapp</name>
 <description>Universal init code for Intel XDK and Cordova device ready detection.</description>
 <author>Intel XDK</author>
 <content src="index.html"/>

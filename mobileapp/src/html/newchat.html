@@ -1,0 +1,16 @@
+<ons-dialog var="dialog" cancelable ng-controller="NewChatController">
+	<ons-toolbar inline>
+		<div class="center">
+			New Chat
+		</div>
+	</ons-toolbar>
+	<p>
+		<input placeholder="Chat Name" ng-model="chatname" class="text-input">
+	</p>
+	<p>
+		Public: <ons-switch class="float-right" ng-model="is_public" checked></ons-switch>
+	</p>
+	<p>
+		<ons-button modifier="large" ng-click="newChat()">Create</ons-button>
+	</p>
+</ons-dialog>

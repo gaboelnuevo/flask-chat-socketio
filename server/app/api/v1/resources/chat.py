@@ -53,7 +53,7 @@ class ChatList(Resource):
         chats = []
         q = ChatModel.query.filter(ChatModel.haversine(args['latitude'], args['longitude'])*111.045 < 0.075)
         for chat in q:
-            chats.append(chat.toCustomDict(merge={'joined':chat.isUserJoined(request.oauth.user.id),'distance_in_meters': chat.haversine(args['latitude'], args['longitude'])*111.045}))
+            chats.append(chat.toCustomDict(merge={'joined':chat.isUserJoined(request.oauth.user.id),'distance_in_meters': int(chat.haversine(args['latitude'], args['longitude'])*111.045)}))
         return jsonify(result = chats)
 
     @marshal_with(chat_fields)
