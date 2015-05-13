@@ -13,9 +13,17 @@ from flask.ext.cors import cross_origin
 from ..data.models import Client, Grant, Token, User
 from ..data import mydb as db
 
+from flask import g
+
 oauth_blue = Blueprint( 'oauth_blue', __name__,template_folder='../templates')
 oauth = OAuth2Provider()
 
+def get_current_user():
+    oauth_user = getattr(g, 'oauth_user', None)
+    if oauth_user is not None:
+        return oauth_user
+    else:
+        return current_user
 
 @oauth.clientgetter
 def load_client(client_id):
@@ -35,12 +43,12 @@ def save_grant(client_id, code, request, *args, **kwargs):
         code=code['code'],
         redirect_uri=request.redirect_uri,
         _scopes=' '.join(request.scopes),
-        user=current_user,
+        user=get_current_user(),
         expires=expires
     )
     grants = Grant.query.filter_by(
         client_id=request.client.client_id,
-        user_id=current_user.id
+        user_id=get_current_user().id
     )
     for g in grants:
         db.session.delete(g)
@@ -121,7 +129,7 @@ def authorize(*args, **kwargs):
     if request.method == 'GET':
         if not user.is_authenticated():
             session['auth_args'] = json.dumps(data)
-            return redirect(url_for('users.login'))
+            return redirect(url_for('users_manager.login'))
         oficial_client = isOficialClient(client_id)
         client = Client.query.filter_by(client_id=client_id).first()
         kwargs['client'] = client
@@ -136,12 +144,12 @@ def authorize(*args, **kwargs):
         user = User.query.filter_by(username = username).first()
         if not user or not user.is_valid_password(password):
             return redirect(url_for('.error', error='incorrect_user_or_password'))
-        login_user(user)
+        g.oauth_user = user
         return True
     confirm = request.form.get('confirm', 'no')
     redirect_uri = request.form.get('redirect_uri', None)
     if not user.is_authenticated():
-        return redirect(url_for('users.login'))
+        return redirect(url_for('users_manager.login'))
     if redirect_uri:
         return confirm == 'yes' or redirect(redirect_uri + '?error=user_denied&error_reason=user denied&error_description=User cancel the authentication')
     return confirm == 'yes' or redirect(url_for('.error', error='user_denied'))
@@ -164,7 +172,7 @@ def show_request_token():
 def client():
     user = current_user
     if not user.is_authenticated():
-        return redirect(url_for('users.login'))
+        return redirect(url_for('users_manager.login'))
     item = Client(
         client_id=gen_salt(40),
         client_secret=gen_salt(50),

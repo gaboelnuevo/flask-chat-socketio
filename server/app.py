@@ -8,7 +8,8 @@
 import imp
 import os
 import sys
-import app as application
+#import app as application
+from app import socketio, app
 
 try:
   virtenv = os.path.join(os.environ.get('OPENSHIFT_PYTHON_DIR','.'), 'virtenv')
@@ -33,36 +34,41 @@ except IOError:
 #  main():
 #
 if __name__ == '__main__':
-  port = application.app.config['PORT']
-  ip = application.app.config['IP']
-  app_name = application.app.config['APP_NAME']
-  host_name = application.app.config['HOST_NAME']
+  port = app.config['PORT']
+  ip = app.config['IP']
+  app_name = app.config['APP_NAME']
+  host_name = app.config['HOST_NAME']
 
-  fwtype="wsgiref"
-  for fw in ("gevent", "cherrypy", "flask"):
-    try:
-      imp.find_module(fw)
-      fwtype = fw
-    except ImportError:
-      pass
+  #run socketio server
+  from gevent import monkey
+  monkey.patch_all()
+  socketio.run(app,host=ip, port=port)
 
-  print('Starting WSGIServer type %s on %s:%d ... ' % (fwtype, ip, port))
-  if fwtype == "gevent":
-    from gevent.pywsgi import WSGIServer
-    WSGIServer((ip, port), application.app).serve_forever()
-
-  elif fwtype == "cherrypy":
-    from cherrypy import wsgiserver
-    server = wsgiserver.CherryPyWSGIServer(
-      (ip, port), application.app, server_name=host_name)
-    server.start()
-
-  elif fwtype == "flask":
-    from flask import Flask
-    server = Flask(__name__)
-    server.wsgi_app = application.app
-    server.run(host=ip, port=port)
-
-  else:
-    from wsgiref.simple_server import make_server
-    make_server(ip, port, application.app).serve_forever()
+  # fwtype="wsgiref"
+  # for fw in ("gevent", "cherrypy", "flask"):
+  #   try:
+  #     imp.find_module(fw)
+  #     fwtype = fw
+  #   except ImportError:
+  #     pass
+  #
+  # print('Starting WSGIServer type %s on %s:%d ... ' % (fwtype, ip, port))
+  # if fwtype == "gevent":
+  #   from gevent.pywsgi import WSGIServer
+  #   WSGIServer((ip, port), application.app).serve_forever()
+  #
+  # elif fwtype == "cherrypy":
+  #   from cherrypy import wsgiserver
+  #   server = wsgiserver.CherryPyWSGIServer(
+  #     (ip, port), application.app, server_name=host_name)
+  #   server.start()
+  #
+  # elif fwtype == "flask":
+  #   from flask import Flask
+  #   server = Flask(__name__)
+  #   server.wsgi_app = application.app
+  #   server.run(host=ip, port=port)
+  #
+  # else:
+  #   from wsgiref.simple_server import make_server
+  #   make_server(ip, port, application.app).serve_forever()

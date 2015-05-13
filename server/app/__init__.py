@@ -7,6 +7,9 @@ from flask import render_template, redirect, jsonify
 from flask.ext.login import current_user
 from flask import make_response
 
+from flask.ext.socketio import SocketIO
+socketio = SocketIO()
+
 from settings import settings_start
 
 import re
@@ -14,6 +17,8 @@ import re
 app = Flask(__name__, template_folder='templates')
 app.config.from_object(config)
 settings_start(app)
+
+socketio.init_app(app)
 
 @app.route('/')
 def home():

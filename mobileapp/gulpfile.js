@@ -16,7 +16,9 @@ var config = {
       './bower_components/angular-animate/angular-animate.js',
       './bower_components/moment/moment.js',
       './bower_components/angular-moment/angular-moment.js',
-      './bower_components/onsenui/build/js/onsenui.js'
+      './bower_components/onsenui/build/js/onsenui.js',
+      './bower_components/socket.io-client/dist/socket.io.js',
+      './bower_components/angular-socket-io/socket.js'
     ],
 
     fonts: [
@@ -208,7 +210,7 @@ gulp.task('js', function() {
     .pipe(sourcemaps.init())
     .pipe(concat('app.js'))
     .pipe(ngAnnotate())
-    .pipe(uglify())
+    //.pipe(uglify())
     .pipe(rename({suffix: '.min'}))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(path.join(config.dest, 'js')));

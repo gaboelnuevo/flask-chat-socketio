@@ -11,9 +11,7 @@ from flask import session, request, url_for
 
 from .extensions import login_manager
 
-users = Blueprint('users', __name__)
-controller = users
-
+controller = Blueprint('users_manager', __name__)
 
 @login_manager.user_loader
 def user_loader(user_id):
@@ -34,7 +32,7 @@ def login():
     if form.validate_on_submit():
         login_user(form.user)
         flash("Logged in successfully.")
-        if 'auth_args' in session: 
+        if 'auth_args' in session:
             auth_args = json.loads(session.get('auth_args'))
             session.pop('auth_args', None)
             return redirect(url_for('oauth_blue.authorize', response_type = str(auth_args['response_type']), client_id = str(auth_args['client_id']), redirect_uri = str(auth_args['redirect_uri'])))
@@ -42,7 +40,7 @@ def login():
         # Don't use this exact pattern in anything important.
         #return redirect(request.args.get("next") or "/")
         return redirect('/')
-    return render_template('users/login.html', form=form,  current_user=current_user)
+    return render_template('users_manager/login.html', form=form,  current_user=current_user)
 
 
 @controller.route('/register/', methods=('GET', 'POST'))
@@ -55,7 +53,7 @@ def register():
         db.session.commit()
         login_user(user)
         return redirect('/')
-    return render_template('users/register.html', form=form, current_user=user)
+    return render_template('users_manager/register.html', form=form, current_user=user)
 
 
 @controller.route('/logout/')
@@ -67,4 +65,3 @@ def logout():
 #@login_required
 #def perfil():
 #    return "hola"
-    

@@ -58,11 +58,11 @@ appCtrlsMain.controller('GeoCtrl', function($scope,getCurrentPosition) {
 appCtrlsMain.controller('ChatListController', function($scope,$rootScope, $timeout, ChatList, getCurrentPosition){
   $scope.scanning = false;
   $scope.childLoad = null;
-  
+
   $scope.init = function () {
-    $scope.discovery(); 
+    $scope.discovery();
   };
-    
+
   $rootScope.$on('newChatCreated', function () {
     $scope.discovery();
   });
@@ -72,7 +72,7 @@ appCtrlsMain.controller('ChatListController', function($scope,$rootScope, $timeo
     $timeout(callAtTimeout, 4000);
     getCurrentPosition(function(position){
       ChatList.get({
-          latitude: position.coords.latitude, 
+          latitude: position.coords.latitude,
           longitude: position.coords.longitude},
         function(data) {
           $scope.chats = data.result;
@@ -86,7 +86,7 @@ appCtrlsMain.controller('ChatListController', function($scope,$rootScope, $timeo
     $scope.chat_id = id;
     myNavigator.pushPage('detail.html', { animation : 'slide' });
   };
-    
+
   function callAtTimeout() {
     $scope.scanning = false;
   }
@@ -186,6 +186,29 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval, Me
     $scope.msgbody = "";
   };
 });
+
+appCtrlsMain.controller('ChatIOController', function($scope,$timeout,$interval, socket){
+  $scope.glued = false;
+  $scope.messages = [];
+
+  $scope.$on('socket:error', function (ev, data) {
+    alert(data);
+  });
+
+  socket.on('connect', function () {
+    socket.emit('joined', {});
+  });
+
+  socket.on('message', function(data) {
+    $scope.messages.push(data.msg);
+    alert(data.msg);
+  });
+
+  $scope.init = function(){
+    alert("conecting..");
+  };
+});
+
 
 appCtrlsMain.controller('RadarController', function($scope){
   // inner variables
