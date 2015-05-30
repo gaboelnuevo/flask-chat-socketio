@@ -22,16 +22,16 @@ def authenticated_only(f):
             request.namespace.disconnect()
     return wrapped
 
-@socketio.on('connect', namespace='/chat')
+@socketio.on('connect', namespace='/test')
 def handle_connect():
     emit('event connected', {'msg': 'connection open!'})
 
-@socketio.on('disconnect', namespace='/chat')
+@socketio.on('disconnect', namespace='/test')
 def handle_disconnect():
     pass
     #session.clear()
 
-@socketio.on('authenticate', namespace='/chat')
+@socketio.on('authenticate', namespace='/test')
 def authenticate(message):
     token = load_token(message['token'])
     if token:
@@ -40,7 +40,7 @@ def authenticate(message):
     else:
         emit('authentication failed', {'msg': 'authentication failed. Invalid token!'})
 
-@socketio.on('joined', namespace='/chat')
+@socketio.on('joined', namespace='/test')
 @authenticated_only
 def joined(message):
     """Sent by clients when they enter a room.
@@ -50,7 +50,7 @@ def joined(message):
     user = get_user()
     emit('status', {'msg': user.name + ' has entered the room: '+ room}, room=room)
 
-@socketio.on('text', namespace='/chat')
+@socketio.on('text', namespace='/test')
 @authenticated_only
 def msg(message):
     """Sent by a client when the user entered a new message.
@@ -60,7 +60,7 @@ def msg(message):
     user = get_user()
     emit('message', {'msg': user.name  +':'+ msg}, room = room)
 
-@socketio.on('left', namespace='/chat')
+@socketio.on('left', namespace='/test')
 @authenticated_only
 def left(message):
     """Sent by clients when they leave a room.

@@ -8,17 +8,18 @@ from flask.ext.login import current_user
 from flask import make_response
 
 from flask.ext.socketio import SocketIO
-socketio = SocketIO()
 
-from settings import settings_start
+
+import config
 
 import re
 
 app = Flask(__name__, template_folder='templates')
 app.config.from_object(config)
-settings_start(app)
+socketio = SocketIO(app)
 
-socketio.init_app(app)
+from settings import settings_start
+settings_start(app)
 
 @app.route('/')
 def home():

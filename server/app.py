@@ -39,6 +39,8 @@ if __name__ == '__main__':
   app_name = app.config['APP_NAME']
   host_name = app.config['HOST_NAME']
 
+  app.debug = True
+
   #run socketio server
   from gevent import monkey
   monkey.patch_all()

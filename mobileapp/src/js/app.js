@@ -17,7 +17,7 @@ var clientSecret = "S2j2H3UWBqmMv5ZmKnWHmML5mKZkoDmSntlyMV6NFvSL7XAdlG";
 	angular.module('App', [
 		'ngResource',
 		'onsen',
-    'ngAnimate',
+		'ngAnimate',
 		'angularMoment',
 		'btford.socket-io',
 		'App.directives.scrollGlue',
@@ -25,12 +25,12 @@ var clientSecret = "S2j2H3UWBqmMv5ZmKnWHmML5mKZkoDmSntlyMV6NFvSL7XAdlG";
 		'App.directives.emojifymsg',
 		'App.filters.asdate',
 		'App.services.Resources',
-    'App.services.DeviceReady',
-    'App.services.Geolocation',
+		'App.services.DeviceReady',
+		'App.services.Geolocation',
 		'App.services.Socketio',
 		'App.controllers.Login',
 		'App.controllers.Main',
-    'App.controllers.Security']);
+		'App.controllers.Security']);
 })();
 twemojify.setConfig({
 	size : 'twa-lg' // You can change emoji sizes via twa-lg, twa-2x, twa-3x, twa-4x and twa-5x.

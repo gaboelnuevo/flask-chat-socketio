@@ -1,4 +1,4 @@
-from flask_debugtoolbar import DebugToolbarExtension
+#from flask_debugtoolbar import DebugToolbarExtension
 from flask.ext.cors import CORS
 from .blueprints import register_blueprints
 import re
@@ -14,6 +14,7 @@ import calendar
 
 class CustomJSONEncoder(JSONEncoder):
     def default(self, obj):
+        print type(obj)
         try:
             #Custom Dateformat
             if isinstance(obj, datetime):

@@ -92,20 +92,53 @@ appCtrlsMain.controller('ChatListController', function($scope,$rootScope, $timeo
   }
 });
 
-appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval, Me, MessageList, Message){
+appCtrlsMain.controller('ChatController', function($scope, $rootScope,$timeout,$interval, Me, MessageList, Message,Socket){
   $scope.glued = false;
   $scope.fetching = false;
   $scope.msgbody = "";
-  $scope.intervalPromise = $interval(fetch_new_msg,3000, false);
+  $scope.messages = [];
+  //$scope.intervalPromise = $interval(fetch_new_msg,3000, false);
   $scope.$on('$destroy',function(){
   if($scope.intervalPromise)
     $interval.cancel($scope.intervalPromise);
   });
+
   $scope.init = function () {
-    $scope.messages = [];
     $scope.chat_id = $scope.$parent.chat_id;
     $timeout(load, 1000);
   };
+
+  Socket.on('event connected', function(data) {
+      if ($rootScope.oauth)
+        Socket.emit('authenticate', {'token': $rootScope.oauth.access_token});
+  });
+
+
+  $rootScope.$watch('oauth', function(newVal, oldVal) {
+    if ($rootScope.oauth)
+        Socket.emit('authenticate', {'token': $rootScope.oauth.access_token});
+  });
+
+  Socket.on('authenticated', function(data) {
+      console.log(data.msg);
+      Socket.emit('joined', {'room': $scope.chat_id.toString()});
+  });
+
+  Socket.on('authentication failed', function(data) {
+      console.log(data.msg);
+  });
+
+  Socket.on('status', function(data) {
+      console.log(data.msg);
+  });
+
+  Socket.on('message', function(data) {
+      console.log(data.msg);
+      $scope.messages.push(data.msg);
+      if($scope.scrolled){
+          $scope.scrollTo();
+      }
+  });
 
   $scope.load_olds = function($done) {
       $timeout(function() {
@@ -124,6 +157,7 @@ appCtrlsMain.controller('ChatController', function($scope,$timeout,$interval, Me
     MessageList.get({chat_id: $scope.chat_id, limit: 10}, function(data){
       $scope.messages = data.messages;
       $scope.scrollTo();
+      $scope.scrolled = true;
     });
   };
 

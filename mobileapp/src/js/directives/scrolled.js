@@ -6,7 +6,7 @@
           return function(scope, element, attrs) {
               var page = element[0].querySelector(".ons-page-inner");
               angular.element(page).bind('scroll', function () {
-                if (this.scrollTop + this.offsetHeight > this.scrollHeight) {
+                if (this.scrollTop + this.offsetHeight >= this.scrollHeight) {
                     scope[attrs.scrolled] = true;
                 }else{
                     scope[attrs.scrolled] = false;

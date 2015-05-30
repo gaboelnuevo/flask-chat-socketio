@@ -17,7 +17,7 @@ def index():
     return render_template('chatio/index.html', form=form)
 
 
-@chatio.route('/chat')
+@chatio.route('/chattest')
 def chat():
     """Chat room. The user's name and room must be stored in
     the session."""

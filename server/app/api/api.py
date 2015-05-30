@@ -8,6 +8,8 @@ from .versions import register_versions
 
 from . import versions
 
+from sockets import events
+
 api_blue = Blueprint( 'api', __name__,template_folder='../templates')
 
 def register_apis(app):

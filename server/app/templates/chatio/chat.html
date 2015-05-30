@@ -15,6 +15,11 @@
             function authenticate(){
                 socket.emit('authenticate', {'token': $("#token").val()});
             }
+
+            function test_error(){
+                socket.emit('error testing', {});
+            }
+            
             
             var socket;
             $(document).ready(function(){
@@ -71,5 +76,7 @@
         <br/>
         Token: <input type="text" id="token" />
         <a href="#" onclick="authenticate()">Authenticate</a>
+        <br/>
+        <a href="#" onclick="test_error()">Test error</a>
     </body>
 </html>

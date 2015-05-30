@@ -63,7 +63,7 @@ class User(UserMixin, db.Model, DictMapper):
     def __repr__(self):
         return "<User #{:d}>".format(self.id)
 
-    @mapperConfig(only=['id', 'name', 'username', 'email', 'contry'], exclude=['password','contry_id'])
+    @mapperConfig(only=['id', 'name', 'username', 'contry'], exclude=['password','contry_id'])
     def defineMapper(self):
         pass
 
